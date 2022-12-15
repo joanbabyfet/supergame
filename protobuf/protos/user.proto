@@ -1,0 +1,50 @@
+syntax = "proto3";
+package backstage;
+
+option go_package="gitlab.initcapp.com/gaming/ptgame_protobuf/gen/lobby/backstage";
+
+service UserService {
+    // ChangeStatus, this function should be used by admin/backstage, either they want to Delete or Enable or Disable
+    // Lobby will publish this user to MQ for other service subcribe base on demand
+    rpc ChangeStatus(User) returns (User) {};
+    // ChangeChannelStatus, this function should be used by admin/backstage, either they want to Delete or Enable or Disable
+    // Lobby will publish this user to MQ for other service subcribe base on demand
+    rpc ChangeChannelStatus(User) returns (User) {};
+    // CreateLoginLog for create login log from user login via api
+    rpc CreateLoginLog (UserLoginLogRequest) returns (UserLoginLogResponse);
+}
+
+enum UserStatus {
+    DELETED = 0;
+    DISABLED = 1;
+    ENABLED = 2;
+}
+// User use for both request and response
+// will response id while it success
+message User {
+    string id = 1;
+    // DELETED: use while admin/backstage has case to delete user permenantly
+    // DISABLED: use while admin/backstage has case to disable user's activity from game
+    // ENABLED:  use while admin/backstage has case to enable back user's activity in game
+    UserStatus status = 2;
+}
+
+// UserLoginLogRequest for request login from api
+message UserLoginLogRequest {
+    string uid = 1;
+    string username = 2;
+    string sessionId = 3;
+    string agent = 4;
+    int64 loginTime = 5;
+    string loginIp = 6;
+    string loginCountry = 7;
+    int64 exitTime = 8;
+    bytes extra_info = 9;
+    uint32 status = 10;
+    string cliHash = 11;
+}
+
+// UserLoginLogResponse response empty if success, response error if failed
+message UserLoginLogResponse {
+    
+}

@@ -1,0 +1,102 @@
+kind: pipeline
+type: docker
+name: DEV-ptgame
+
+clone:
+  disable: true
+steps:
+  - name: ssh-deploy-devlop-web
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        - 35.198.237.159
+      username:
+        from_secret: ssh_username #在web界面中设置密码
+      key:
+        from_secret: ssh_key_prod #在web界面中设置密码
+      port: 22
+      timeout: 2m
+      command_timeout: 2m
+      script:
+        - cd /home/ubuntu/api
+        - git checkout .
+        - git clean -fd
+        - git checkout develop
+        - git pull
+#        - cd /home/ubuntu/laradock
+#        - sudo docker exec laradock_workspace_1 php /var/www/api/artisan queue:restart
+#        - sudo docker exec laradock_workspace_1 composer install -d /var/www/api
+        - echo "finish"
+    when:
+      branch:
+        - develop
+  - name: send telegram notification
+    pull: if-not-exists
+    image: appleboy/drone-telegram
+    settings:
+      token:
+        from_secret: tg_token
+      to: -726783003
+      message: >
+        {{#success build.status}}
+          build#{{build.number}} ptgame api test machine subordinate succeeded  git message:{{commit.message}}
+        {{else}}
+          build#{{build.number}} ptgame api test machine subordinate failed
+        {{/success}}
+trigger:
+  branch:
+    - develop
+  event:
+    - push
+
+---
+
+kind: pipeline
+type: docker
+name: main-ptgame
+
+clone:
+  disable: true
+steps:
+  - name: ssh-deploy-main-web
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        - 34.142.179.17
+      username:
+        from_secret: ssh_username #在web界面中设置密码
+      key:
+        from_secret: ssh_key_prod #在web界面中设置密码
+      port: 22
+      timeout: 2m
+      command_timeout: 2m
+      script:
+        - cd /home/ubuntu/api
+        - git checkout .
+        - git clean -fd
+        - git checkout main
+        - git pull
+        - echo "finish"
+    when:
+      branch:
+        - main
+
+
+  #how to get channel id https://gist.github.com/mraaroncruz/e76d19f7d61d59419002db54030ebe35
+  - name: send telegram notification
+    image: appleboy/drone-telegram
+    settings:
+      token:
+        from_secret: tg_token
+      to: -726783003
+      message: >
+        {{#success build.status}}
+          build#{{build.number}} ptgame api production machine subordinates succeeded git message:{{commit.message}}
+        {{else}}
+          build#{{build.number}} ptgame api production machine subordinate failed
+        {{/success}}
+trigger:
+  branch:
+    - main
+  event:
+    - push

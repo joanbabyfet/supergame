@@ -1,0 +1,65 @@
+syntax = "proto3";
+package backstage;
+
+option go_package="gitlab.initcapp.com/gaming/ptgame_protobuf/gen/lobby/backstage";
+
+// rpc service for wallet
+service WalletService {
+    // Deposit use to recharge the player's balance
+    rpc Deposit(DepositRequest) returns (WalletResponse) {};
+    // Withdraw use to withdraw the player's balance
+    rpc Withdraw(WithdrawRequest) returns (WalletResponse){};
+}
+
+message DepositRequest {
+    // is userId
+    string holderId = 1;
+    // if not pass will use word `default`
+    // use for create wallet, if it not exists
+    string name = 2;
+    // if not pass will use word `default`
+    // use for create wallet, if it not exists
+    string slug = 3;
+    // use for create wallet, if it not exists
+    string description = 4;
+    // balance to deposit must be positive number
+    double balance = 5;
+    // expected caller will generate it, 
+    // this is will save into `pt_order_transfer`
+    string transactionId = 6;
+    // 1: player (玩家下单)
+    // 2: backstage (后台下单)
+    // 3: payout (結算派彩)
+    uint32 origin = 7;
+    // use for save into `pt_order_transfer`,
+    string remark = 8;
+    // currency will get from Redis, if client not pass the value
+    string currency = 9;
+    // agentId will get from Redis, if client not pass the value
+    string agentId = 10;
+}
+message WithdrawRequest {
+    // is userId
+    string holderId = 1;
+    // balance to withdraw must be positive number
+    double balance = 2;
+    // expected caller will generate it
+    string transactionId = 3;
+    // 1: player (玩家下单)
+    // 2: backstage (后台下单)
+    // 3: payout (結算派彩)
+    uint32 origin = 4;
+     // use for saving in `pt_order_transfer`
+    string remark = 5;
+    // currency will get from Redis, if client not pass the value
+    string currency = 6;
+    // agentId will get from Redis, if client not pass the value
+    string agentId = 7;
+}
+
+// WalletResponse, will return orderId with last balance while the operation succeed
+// if the operation was failed will throw error of rpc instead
+message WalletResponse {
+    string orderId = 1;
+    double balance = 2;
+}

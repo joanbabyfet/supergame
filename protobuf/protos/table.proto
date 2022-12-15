@@ -1,0 +1,21 @@
+syntax = "proto3";
+package backstage;
+
+option go_package="gitlab.initcapp.com/gaming/ptgame_protobuf/gen/lobby/backstage";
+
+// rpc table service
+service TableService {
+    // DeleteTable use when admin/backstage delete table
+    // NOTE: admin/backstage call to delete table via this rpc only, do not directly to MYSQL
+    rpc DeleteTable(DeleteTableBackstageRequest) returns (DeleteTableBackstageResponse) {};
+}
+
+message DeleteTableBackstageRequest  {
+    uint32 id = 1;
+    // for using in column `delete_user`
+    string userId = 2;
+}
+
+message DeleteTableBackstageResponse  {
+    uint32 id =1;
+}

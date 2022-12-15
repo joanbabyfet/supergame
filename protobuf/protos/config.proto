@@ -1,0 +1,30 @@
+syntax = "proto3";
+package backstage;
+
+option go_package="gitlab.initcapp.com/gaming/ptgame_protobuf/gen/lobby/backstage";
+
+// rpc service for config
+service ConfigService {
+    // ChangeConfig use when backstage changed any config related to 
+    // table config or game config, should inform to lobby via this rpc
+    rpc ChangeConfig(ChangeConfigRequest) returns (ChangeConfigResponse) {};
+    // ChangeMaintainConfig use when backstage changed maintainance config
+    rpc ChangeMaintainConfig(MaintainConfig) returns (ChangeConfigResponse) {};
+}
+
+message ChangeConfigRequest {
+    
+}
+
+message MaintainConfig {
+    string title = 1;
+    string content = 2;
+    // 0: not in maintainance, 1: in mantainance
+    int32 mode = 3;
+}
+
+// ChangeConfigResponse will response `status: true` while it success
+// otherwise will return error with rpc error format
+message ChangeConfigResponse {
+    bool status = 1;
+}
