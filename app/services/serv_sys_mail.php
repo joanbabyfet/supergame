@@ -164,7 +164,7 @@ class serv_sys_mail
                     'view_data' => $view_data,
                 ];
                 $job = new job_send_mail($params);
-                dispatch($job);
+                dispatch($job)->onQueue('mail');
 
                 $page_no++;
             }

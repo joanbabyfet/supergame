@@ -33,4 +33,15 @@ class job_example implements ShouldQueue
         //业务
 
     }
+
+    /**
+     * 任务失败处理
+     *
+     * @param  Exception  $exception
+     * @return void
+     */
+    public function failed(\Exception $exception)
+    {
+
+    }
 }
