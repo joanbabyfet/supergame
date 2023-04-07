@@ -11,117 +11,10 @@ class serv_telegram
     use trait_service_base;
 
     private $token;
-    private $callback_url;
 
     public function __construct()
     {
-        $this->token          = config('global.telegram_bot.token');
-        $this->callback_url   = config('global.telegram_bot.callback_url');
-    }
-
-    /**
-     * 设置回调地址
-     * @param array $ret_data
-     * @return int|mixed
-     */
-    public function set_webhook(&$ret_data = [])
-    {
-        $status = 1;
-        try
-        {
-            $url    = 'https://api.telegram.org/bot' . $this->token . '/setWebhook';
-            $param = [
-                'url' => $this->callback_url
-            ];
-            $res = api_post($url, $param);
-            $ret = json_decode($res['body'], true);
-            if($ret['ok'] === false)
-            {
-                $this->exception('error', -1);
-            }
-            $ret_data = $ret;
-        }
-        catch (\Exception $e)
-        {
-            $status = $e->getCode();
-            //記錄日誌
-            logger(__METHOD__, [
-                'status'  => $status,
-                'errcode' => $e->getCode(),
-                'errmsg'  => $e->getMessage(),
-            ]);
-        }
-        return $status;
-    }
-
-    /**
-     * 删除回调地址
-     * @param array $ret_data
-     * @return int|mixed
-     */
-    public function delete_webhook(&$ret_data = [])
-    {
-        $status = 1;
-        try
-        {
-            $url    = 'https://api.telegram.org/bot' . $this->token . '/deleteWebhook';
-            $param = [
-                'url' => $this->callback_url
-            ];
-            $res = api_post($url, $param);
-            $ret = json_decode($res['body'], true);
-            if($ret['ok'] === false)
-            {
-                $this->exception('error', -1);
-            }
-            $ret_data = $ret;
-        }
-        catch (\Exception $e)
-        {
-            $status = $e->getCode();
-            //記錄日誌
-            logger(__METHOD__, [
-                'status'  => $status,
-                'errcode' => $e->getCode(),
-                'errmsg'  => $e->getMessage(),
-            ]);
-        }
-        return $status;
-    }
-
-    /**
-     * 获取当前回调信息
-     * @param array $ret_data
-     * @return int|mixed
-     */
-    public function get_webhook_info(&$ret_data = [])
-    {
-        $status = 1;
-        try
-        {
-            $url    = 'https://api.telegram.org/bot' . $this->token . '/getWebhookInfo';
-            $param = [
-                'url' => $this->callback_url
-            ];
-            $res = api_post($url, $param);
-            $ret = json_decode($res['body'], true);
-            if($ret['ok'] === false)
-            {
-                $this->exception('error', -1);
-            }
-            $ret_data = $ret;
-        }
-        catch (\Exception $e)
-        {
-            $status = $e->getCode();
-            //記錄日誌
-            logger(__METHOD__, [
-                'status'  => $status,
-                'errcode' => $e->getCode(),
-                'errmsg'  => $e->getMessage(),
-            ]);
-        }
-        return $status;
+        $this->token    = config('global.telegram_bot.token');
     }
 
     /**
@@ -135,16 +28,14 @@ class serv_telegram
         try
         {
             $url    = 'https://api.telegram.org/bot' . $this->token . '/getMe';
-            $param = [
-                'url' => $this->callback_url
-            ];
+            $param = [];
             $res = api_post($url, $param);
             $ret = json_decode($res['body'], true);
             if($ret['ok'] === false)
             {
                 $this->exception('error', -1);
             }
-            $ret_data = $ret;
+            $ret_data = $ret['result'];
         }
         catch (\Exception $e)
         {
@@ -164,7 +55,7 @@ class serv_telegram
      * @param array $data
      * @return int|mixed
      */
-    public function send(array $data)
+    public function send(array $data, &$ret_data = [])
     {
         //参数过滤
         $data_filter = data_filter([
@@ -177,8 +68,10 @@ class serv_telegram
         {
             $url    = 'https://api.telegram.org/bot' . $this->token . '/sendMessage';
             $param = [
-                'chat_id'   => $data_filter['chat_id'],
-                'text'      => $data_filter['text'],
+                'chat_id'                   => $data_filter['chat_id'],
+                'text'                      => $data_filter['text'],
+                'parse_mode'                => 'HTML',
+                'disable_web_page_preview'  => true,
             ];
             $res = api_post($url, $param);
             $ret = json_decode($res['body'], true);
@@ -186,6 +79,7 @@ class serv_telegram
             {
                 $this->exception('error', -1);
             }
+            $ret_data = $ret['result'];
         }
         catch (\Exception $e)
         {

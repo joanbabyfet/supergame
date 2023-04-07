@@ -34,6 +34,10 @@ password: Bb123456
 ## Change Log
 v1.0.0
 
+v1.0.1 - 2023-04-07
+* 优化发送telegram模块
+* 区分指定任务推送到哪个队列
+
 ## Maintainers
 Alan
 
