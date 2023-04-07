@@ -162,7 +162,7 @@ class serv_sys_sms
                     'send_uid'      => $send_uid,
                 ];
                 $job = new job_send_sms($params);
-                dispatch($job);
+                dispatch($job)->onQueue('sms');
 
                 $page_no++;
             }

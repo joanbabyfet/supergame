@@ -19,7 +19,7 @@ class Kernel extends HttpKernel
         \Fruitcake\Cors\HandleCors::class, //解决跨域
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class, //检测是否系统维护中
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
-        \App\Http\Middleware\TrimStrings::class,
+        \App\Http\Middleware\TrimStrings::class, //清理$_GET和$_POST两个数组值的前后空白字符
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 

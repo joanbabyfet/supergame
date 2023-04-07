@@ -113,7 +113,7 @@ class ctl_test extends Controller
 
         //分派任务到异步队列池
 //        $job_example = new job_example();
-//        dispatch($job_example);
+//        dispatch($job_example)->onQueue('example');
 
         //获取系统配置
 //        $business_hours = $this->repo_config->get('business_hours');
@@ -165,26 +165,26 @@ class ctl_test extends Controller
 //        }
 
         //推送任务到队列
-//        $view_data = [
-//            '4c1ea0e231e194467d8801f4d70d7a09' => [
-//                'realname'  =>  '1',
-//                'username'  =>  '2',
-//                'code'      =>  '3',
-//            ]
-//        ];
-//        $to = [
-//            '4c1ea0e231e194467d8801f4d70d7a09' => [
-//                'email' => 'test@gmail.com',
-//                'name' => 'peter',
-//            ]
-//        ];
-//        $job = new job_send_mail([
-//            'to'        => $to,
-//            'subject'   => '测试',
-//            'view'      => 'mail.example',
-//            'view_data' => $view_data,
-//        ]);
-//        dispatch($job);
+        $view_data = [
+            '4c1ea0e231e194467d8801f4d70d7a09' => [
+                'realname'  =>  '1',
+                'username'  =>  '2',
+                'code'      =>  '3',
+            ]
+        ];
+        $to = [
+            '4c1ea0e231e194467d8801f4d70d7a09' => [
+                'email' => 'crwu0206@gmail.com',
+                'name' => 'peter',
+            ]
+        ];
+        $job = new job_send_mail([
+            'to'        => $to,
+            'subject'   => '测试',
+            'view'      => 'mail.example',
+            'view_data' => $view_data,
+        ]);
+        dispatch($job)->onQueue('mail');
 
         //依据发送对象推送任务到队列
 //        $view_data = [
@@ -217,7 +217,7 @@ class ctl_test extends Controller
 //            'send_users'    => $send_users, //接收人数组
 //            'send_uid'      => defined('AUTH_UID') ? AUTH_UID : '',
 //        ]);
-//        dispatch($job);
+//        dispatch($job)->onQueue('sms');
 
         //依据发送对象推送任务到队列
 //        $status = $this->serv_sys_sms->send([

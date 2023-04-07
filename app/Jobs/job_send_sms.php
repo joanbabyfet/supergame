@@ -49,4 +49,15 @@ class job_send_sms implements ShouldQueue
             ]);
         }
     }
+
+    /**
+     * 任务失败处理
+     *
+     * @param  Exception  $exception
+     * @return void
+     */
+    public function failed(\Exception $exception)
+    {
+
+    }
 }
